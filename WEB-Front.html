@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b5e9b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AQUASENSE">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <title>AQUASENSE</title>
+  <link rel="stylesheet" href="WEB-Design.css">
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-temp" viewBox="0 0 24 24"><path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a4 4 0 1 1-4 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="17" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.2v.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="app">
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- Drawer (slide-in on mobile, fixed sidebar on desktop) -->
+  <aside class="drawer" id="drawer" aria-label="Menu">
+    <img class="drawer-logo" src="assets/logo.png" alt="AQUASENSE">
+    <nav class="drawer-nav" aria-label="Main">
+      <button class="nav-btn active" data-view="dashboard"><img src="assets/dashboard.png" alt=""><span>Dashboard</span></button>
+      <button class="nav-btn" data-view="records"><img src="assets/folder.png" alt=""><span>Records</span></button>
+      <button class="nav-btn" data-view="cleaning"><img src="assets/water-tester.png" alt=""><span>Cleaning Guide</span></button>
+    </nav>
+    <div class="side-foot" data-state="wait">
+      <span class="live-dot"></span>
+      <div><strong id="syncTitle">Prototype</strong><small id="syncLabel">Connecting…</small></div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="drawer" aria-expanded="false"><i></i><i></i><i></i></button>
+      <span class="brand-name">AQUASENSE</span>
+      <span class="clock" id="clock">--:--</span>
+      <div class="waves" aria-hidden="true"></div>
+    </header>
+
+    <main class="content">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="view-dashboard" class="view active" aria-label="Dashboard">
+        <div class="dash-grid">
+
+          <div class="live-bar reveal" id="liveBar" data-state="wait" role="status">
+            <span class="lb-dot"></span><span id="liveText">Connecting to the prototype…</span>
+          </div>
+
+          <button class="card species-card reveal" id="speciesCard" aria-haspopup="dialog" aria-label="Select cultured species">
+            <div class="sp-imgs" id="spImgs"></div>
+            <div class="sp-foot">
+              <span class="sp-chev"><svg class="ico"><use href="#i-chev"/></svg></span>
+              <span class="sp-name" id="speciesName">Bangus</span>
+            </div>
+          </button>
+
+          <div class="card risk-card reveal" id="riskCard" data-state="warning">
+            <span class="risk-eyebrow">RISK PREDICTION</span>
+            <strong class="risk-status" id="riskBadge">WARNING</strong>
+            <p class="risk-text" id="riskText">CHECK AND ADJUST IMMEDIATELY</p>
+          </div>
+
+          <div class="card rx-card reveal">
+            <div class="rx-title">PRESCRIPTION</div>
+            <ol class="rx-list" id="rxList"></ol>
+            <div class="rx-wave" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="sensor-grid" id="sensorGrid"></div>
+
+          <div class="card chart-card reveal">
+            <div class="chart-head">
+              <div class="card-title">24-hour trend</div>
+              <div class="legend"><span class="lg-band"></span><span id="legendText">Safe range</span></div>
+            </div>
+            <div class="tabs" id="chartTabs" role="tablist"></div>
+            <div class="chart-wrap">
+              <canvas id="chart"></canvas>
+              <div class="tip" id="chartTip" hidden></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= RECORDS ================= -->
+      <section id="view-records" class="view" aria-label="Records">
+        <div class="card records-card">
+          <div class="rec-head">
+            <div>
+              <span class="eyebrow">Records</span>
+              <h2>Month of <span id="monthLabel">October</span></h2>
+            </div>
+            <div class="month-pick">
+              <button class="btn btn-primary" id="monthBtn" aria-haspopup="listbox" aria-expanded="false">Months <svg class="ico"><use href="#i-chev"/></svg></button>
+              <ul class="month-list" id="monthList" role="listbox" hidden></ul>
+            </div>
+          </div>
+          <ul class="rec-list" id="recList"></ul>
+          <button class="btn btn-ghost" id="dlMonth"><svg class="ico"><use href="#i-down"/></svg> Download whole month</button>
+        </div>
+      </section>
+
+      <!-- ================= CLEANING GUIDE ================= -->
+      <section id="view-cleaning" class="view" aria-label="Cleaning guide">
+        <h2 class="page-title">CLEANING GUIDE</h2>
+        <div class="guide-grid" id="guideGrid"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Species picker (multi-select) -->
+<div class="modal" id="speciesModal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="spTitle">
+    <button class="sheet-close" data-close aria-label="Close"><svg class="ico"><use href="#i-chev"/></svg></button>
+    <h3 id="spTitle">Select Cultured Species</h3>
+    <p class="sheet-hint">Tick every species in the pond.</p>
+    <ul class="species-list" id="speciesList"></ul>
+    <button class="btn btn-primary sheet-done" data-close>Done</button>
+  </div>
+</div>
+
+<!-- Cleaning guide pop-up -->
+<div class="modal" id="guideModal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="gm-panel" role="dialog" aria-modal="true" aria-labelledby="gmTitle">
+    <button class="gm-close" data-close aria-label="Close"><svg class="ico"><use href="#i-chev"/></svg></button>
+    <h3 class="gm-title" id="gmTitle"></h3>
+    <div class="gm-body" id="gmBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="WEB-Back.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyATs5zIhqQaT0r8hutPR4Vliszulj11eyU",
+    authDomain: "aquasense-c25b0.firebaseapp.com",
+    databaseURL: "https://aquasense-c25b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "aquasense-c25b0",
+    storageBucket: "aquasense-c25b0.firebasestorage.app",
+    messagingSenderId: "824485414458",
+    appId: "1:824485414458:web:e334accc3ccc3d46ded703",
+    measurementId: "G-GVE7D9YBC9"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+</body>
+</html>
